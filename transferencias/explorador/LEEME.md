@@ -7,7 +7,17 @@ python transferencias/explorador/servidor.py      # abre http://127.0.0.1:8790
 ```
 En Windows también sirve doble clic en `abrir_explorador.bat`. La primera vez lee `MASTER_resultados.xlsx` (~2 min) y lo guarda en `cache/master.pkl`.
 
-## Publicarlo en Hugging Face Spaces
+## Publicado en Streamlit Community Cloud (gratis)
+`streamlit_app.py` es el explorador como app de Streamlit: los selectores y el cálculo van en Python y el sankey lo dibuja `index.html` en modo incrustado (`window.EMBED`), así se ve igual que la página local. Local: `streamlit run transferencias/explorador/streamlit_app.py` (o «sankeys-streamlit» en `.claude/launch.json`).
+
+Streamlit lee el repo público **github.com/azha2005/transferencias-sankey**, que es `space/_build/` (lo arma `space/armar.py`; la carpeta guarda su propio `.git`). Para actualizarlo:
+```
+python transferencias/explorador/space/armar.py
+cd transferencias/explorador/space/_build && git add -A && git commit -m "..." && git push
+```
+Streamlit vuelve a desplegar solo. Al crear la app en share.streamlit.io: rama `main`, archivo `transferencias/explorador/streamlit_app.py` y, en *Advanced settings*, **Python 3.11** (los `.pkl` son de pandas 1.5.3, que no tiene versión para 3.12 o posterior).
+
+## Publicarlo en Hugging Face Spaces (requiere PRO desde 2026)
 `space/` tiene el `Dockerfile`, `requirements.txt` y el `README.md` (con la cabecera que pide Hugging Face) del Space. `space/armar.py` junta en `space/_build/` (fuera de git) el código y solo los datos que lee el explorador, con las mismas rutas del repo (~185 MB: `circ_*.pkl`, `cache/master.pkl` en lugar del xlsx, `dataset_*.json`, `mapeo_listas`, ámbitos de la DINE, correspondencias y los pares ya calculados):
 ```
 python -c "from huggingface_hub import login; login()"                 # una vez, pega un token de escritura
